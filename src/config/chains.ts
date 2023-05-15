@@ -1,5 +1,3 @@
-import { networks } from '@safe-global/safe-core-sdk-utils/dist/src/eip-3770/config'
-
 /**
  * A static shortName<->chainId dictionary
  * E.g.:
@@ -11,6 +9,16 @@ import { networks } from '@safe-global/safe-core-sdk-utils/dist/src/eip-3770/con
  * }
  */
 type Chains = Record<string, string>
+
+interface NetworkShortName {
+  shortName: string
+  chainId: number
+}
+
+const networks: NetworkShortName[] = [
+  { shortName: 'tenetDev', chainId: 155 },
+  { shortName: 'tenetTest', chainId: 155 },
+]
 
 const chains = networks.reduce<Chains>((result, { shortName, chainId }) => {
   result[shortName] = chainId.toString()

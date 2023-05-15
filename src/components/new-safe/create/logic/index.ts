@@ -29,6 +29,17 @@ import { LATEST_SAFE_VERSION } from '@/config/constants'
 import { EMPTY_DATA, ZERO_ADDRESS } from '@safe-global/safe-core-sdk/dist/src/utils/constants'
 import { formatError } from '@/utils/formatters'
 import { sponsoredCall } from '@/services/tx/relaying'
+import type { ContractNetworksConfig } from '@safe-global/safe-core-sdk/dist/src/types'
+import {
+  createCallAbi,
+  fallbackHandlerAbi,
+  multiSendAbi,
+  multiSendCallOnlyAbi,
+  safeMasterCopyAbi,
+  safeProxyFactoryAbi,
+  signMessageLibAbi,
+} from '@/utils/contracts'
+import type { AbiItem } from 'web3-utils'
 
 export type SafeCreationProps = {
   owners: string[]
@@ -36,6 +47,24 @@ export type SafeCreationProps = {
   saltNonce: number
 }
 
+const customContracts: ContractNetworksConfig = {
+  '155': {
+    safeMasterCopyAddress: '0x51E355076D38c590AE913beFE3100aDeA81eFC89',
+    safeMasterCopyAbi: safeMasterCopyAbi as AbiItem[],
+    safeProxyFactoryAddress: '0xB4691a29E2B430858d50EB75311079196a463712',
+    safeProxyFactoryAbi: safeProxyFactoryAbi as AbiItem[],
+    multiSendAddress: '0x01Db1A30eD511d9Aa18C4280BDF8Ee90333Ae81c',
+    multiSendAbi: multiSendAbi as AbiItem[],
+    multiSendCallOnlyAddress: '0x671dfBFb05de3841be5a0682ff18A06f22d7Fcd9',
+    multiSendCallOnlyAbi: multiSendCallOnlyAbi as AbiItem[],
+    fallbackHandlerAddress: '0x3d888982871437dD236Dd726AA9AD481CB6EdF4e',
+    fallbackHandlerAbi: fallbackHandlerAbi as AbiItem[],
+    signMessageLibAddress: '0xf73D398D59FF7E391Bf80E9bA5625d1D8C2e3110',
+    signMessageLibAbi: signMessageLibAbi as AbiItem[],
+    createCallAddress: '0xA30E25c65BA5AE946054b80F881FbF6A4D479f18',
+    createCallAbi: createCallAbi as AbiItem[],
+  },
+}
 /**
  * Prepare data for creating a Safe for the Core SDK
  */
@@ -65,7 +94,7 @@ export const getSafeDeployProps = (
 export const createNewSafe = async (ethersProvider: Web3Provider, props: DeploySafeProps): Promise<Safe> => {
   const ethAdapter = createEthersAdapter(ethersProvider)
 
-  const safeFactory = await SafeFactory.create({ ethAdapter })
+  const safeFactory = await SafeFactory.create({ ethAdapter, contractNetworks: customContracts })
   return safeFactory.deploySafe(props)
 }
 
@@ -74,8 +103,7 @@ export const createNewSafe = async (ethersProvider: Web3Provider, props: DeployS
  */
 export const computeNewSafeAddress = async (ethersProvider: Web3Provider, props: PredictSafeProps): Promise<string> => {
   const ethAdapter = createEthersAdapter(ethersProvider)
-
-  const safeFactory = await SafeFactory.create({ ethAdapter })
+  const safeFactory = await SafeFactory.create({ ethAdapter, contractNetworks: customContracts })
   return safeFactory.predictSafeAddress(props)
 }
 
@@ -92,7 +120,6 @@ export const encodeSafeCreationTx = ({
   const readOnlySafeContract = getReadOnlyGnosisSafeContract(chain, LATEST_SAFE_VERSION)
   const readOnlyProxyContract = getReadOnlyProxyFactoryContract(chain.chainId)
   const readOnlyFallbackHandlerContract = getReadOnlyFallbackHandlerContract(chain.chainId)
-
   const setupData = readOnlySafeContract.encode('setup', [
     owners,
     threshold,

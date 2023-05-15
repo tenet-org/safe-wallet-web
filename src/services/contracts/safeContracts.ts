@@ -8,7 +8,14 @@ import {
   getSignMessageLibDeployment,
   type SingletonDeployment,
 } from '@safe-global/safe-deployments'
-import { LATEST_SAFE_VERSION } from '@/config/constants'
+import {
+  COMPATIBILITY_FALLBACK_HANDLER_ADDRESS,
+  GNOSIS_SAFE_ADDRESS,
+  GNOSIS_SAFE_PROXY_FACTORY_ADDRESS,
+  LATEST_SAFE_VERSION,
+  MULTI_SEND_ADDRESS,
+  MULTI_SEND_CALL_ONLY_ADDRESS,
+} from '@/config/constants'
 import semverSatisfies from 'semver/functions/satisfies'
 import { ImplementationVersionState } from '@safe-global/safe-gateway-typescript-sdk'
 import type { ChainInfo, SafeInfo } from '@safe-global/safe-gateway-typescript-sdk'
@@ -97,6 +104,7 @@ export const getReadOnlyGnosisSafeContract = (chain: ChainInfo, safeVersion: str
   return ethAdapter.getSafeContract({
     singletonDeployment: getSafeContractDeployment(chain, safeVersion),
     ..._getValidatedGetContractProps(chain.chainId, safeVersion),
+    customContractAddress: GNOSIS_SAFE_ADDRESS,
   })
 }
 
@@ -106,10 +114,8 @@ const getMultiSendContractDeployment = (chainId: string) => {
   return getMultiSendDeployment({ network: chainId }) || getMultiSendDeployment()
 }
 
-export const getMultiSendContractAddress = (chainId: string): string | undefined => {
-  const deployment = getMultiSendContractDeployment(chainId)
-
-  return deployment?.networkAddresses[chainId]
+export const getMultiSendContractAddress = (): string | undefined => {
+  return MULTI_SEND_ADDRESS
 }
 
 // MultiSendCallOnly
@@ -118,10 +124,8 @@ const getMultiSendCallOnlyContractDeployment = (chainId: string) => {
   return getMultiSendCallOnlyDeployment({ network: chainId }) || getMultiSendCallOnlyDeployment()
 }
 
-export const getMultiSendCallOnlyContractAddress = (chainId: string): string | undefined => {
-  const deployment = getMultiSendCallOnlyContractDeployment(chainId)
-
-  return deployment?.networkAddresses[chainId]
+export const getMultiSendCallOnlyContractAddress = (): string | undefined => {
+  return MULTI_SEND_CALL_ONLY_ADDRESS
 }
 
 export const getMultiSendCallOnlyContract = (
@@ -134,6 +138,7 @@ export const getMultiSendCallOnlyContract = (
   return ethAdapter.getMultiSendCallOnlyContract({
     singletonDeployment: getMultiSendCallOnlyContractDeployment(chainId),
     ..._getValidatedGetContractProps(chainId, safeVersion),
+    customContractAddress: MULTI_SEND_CALL_ONLY_ADDRESS,
   })
 }
 
@@ -146,6 +151,7 @@ export const getReadOnlyMultiSendCallOnlyContract = (
   return ethAdapter.getMultiSendCallOnlyContract({
     singletonDeployment: getMultiSendCallOnlyContractDeployment(chainId),
     ..._getValidatedGetContractProps(chainId, safeVersion),
+    customContractAddress: MULTI_SEND_CALL_ONLY_ADDRESS,
   })
 }
 
@@ -169,6 +175,7 @@ export const getReadOnlyProxyFactoryContract = (chainId: string, safeVersion: st
   return ethAdapter.getSafeProxyFactoryContract({
     singletonDeployment: getProxyFactoryContractDeployment(chainId),
     ..._getValidatedGetContractProps(chainId, safeVersion),
+    customContractAddress: GNOSIS_SAFE_PROXY_FACTORY_ADDRESS,
   })
 }
 
@@ -191,10 +198,10 @@ export const getReadOnlyFallbackHandlerContract = (
   safeVersion: string = LATEST_SAFE_VERSION,
 ): CompatibilityFallbackHandlerEthersContract => {
   const ethAdapter = createReadOnlyEthersAdapter()
-
   return ethAdapter.getCompatibilityFallbackHandlerContract({
     singletonDeployment: getFallbackHandlerContractDeployment(chainId),
     ..._getValidatedGetContractProps(chainId, safeVersion),
+    customContractAddress: COMPATIBILITY_FALLBACK_HANDLER_ADDRESS,
   })
 }
 
@@ -212,5 +219,6 @@ export const getReadOnlySignMessageLibContract = (
   return ethAdapter.getSignMessageLibContract({
     singletonDeployment: getSignMessageLibContractDeployment(chainId),
     ..._getValidatedGetContractProps(chainId, safeVersion),
+    customContractAddress: 'SIGN_MESSAGE_LIB_ADDRESS',
   })
 }
