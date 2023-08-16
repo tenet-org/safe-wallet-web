@@ -9,8 +9,8 @@ import { selectCookies, CookieType, saveCookieConsent } from '@/store/cookiesSli
 import { selectCookieBanner, openCookieBanner, closeCookieBanner } from '@/store/popupSlice'
 
 import css from './styles.module.css'
-import { AppRoutes } from '@/config/routes'
-import ExternalLink from '../ExternalLink'
+// import { AppRoutes } from '@/config/routes'
+// import ExternalLink from '../ExternalLink'
 
 const COOKIE_WARNING: Record<CookieType, string> = {
   [CookieType.NECESSARY]: '',
@@ -90,9 +90,9 @@ export const CookieBanner = ({
             <Typography variant="body2" color={color} mb={2}>
               By clicking &quot;Accept all&quot; you agree to the use of the tools listed below and their corresponding{' '}
               <span style={{ whiteSpace: 'nowrap' }}>3rd-party</span> cookies.{' '}
-              <ExternalLink href={AppRoutes.cookie} color={color}>
+              {/* <ExternalLink href={AppRoutes.cookie} color={color}>
                 Cookie policy
-              </ExternalLink>
+              </ExternalLink> */}
             </Typography>
 
             <Grid container alignItems="center" gap={4}>
