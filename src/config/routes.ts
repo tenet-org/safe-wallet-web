@@ -2,7 +2,7 @@ export const AppRoutes = {
   '404': '/404',
   welcome: '/welcome',
   terms: '/terms',
-  privacy: '/privacy',
+  privacy: 'https://tenet.org/privacy',
   licenses: '/licenses',
   index: '/',
   imprint: '/imprint',
